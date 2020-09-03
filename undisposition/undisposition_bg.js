@@ -27,3 +27,42 @@ chrome.webRequest.onHeadersReceived.addListener(
 	},
 	['blocking', 'responseHeaders']
 );
+
+
+function loadOptions(callback)
+{
+	chrome.storage.local.get('activeStatus', function(data) {
+		if (data.activeStatus === undefined) //at first install
+		{
+			data.activeStatus = true;
+			saveOptions();
+		}
+		active = data.activeStatus;
+		if (callback != null)
+			callback();
+	});
+}
+
+function saveOptions()
+{
+	chrome.storage.local.set({ activeStatus: active });
+}
+
+function updateUI()
+{
+	console.log("updateUI end, active = " + active);
+
+	var str = active? "Undisposition active, click to deactivate": "Undisposition disabled, click to activate";
+	chrome.browserAction.setTitle({title:str});
+	chrome.browserAction.setBadgeText({text:active?"Act":"Dis"});
+}
+
+function ToggleActive()
+{
+	active = !active;
+	saveOptions();
+	updateUI();
+}
+
+loadOptions(updateUI);
+chrome.browserAction.onClicked.addListener(ToggleActive);

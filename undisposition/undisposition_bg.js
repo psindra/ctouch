@@ -1,7 +1,7 @@
 var active = true;
 chrome.webRequest.onHeadersReceived.addListener(
 	function(details){
-	//console.log(details);
+	console.log(details);
 		var headers=details.responseHeaders;
 		if (active)
 		{
@@ -9,7 +9,6 @@ chrome.webRequest.onHeadersReceived.addListener(
 				if(headers[i].name.toLowerCase()=='content-disposition'){
 					if(headers[i].value.indexOf('attachment')==0){
 						headers.splice(i,1);
-						//headers[i].value='inline';
 					}
 					break;
 				}
@@ -27,7 +26,7 @@ chrome.webRequest.onHeadersReceived.addListener(
 	},
 	{
 		urls: ['<all_urls>'],
-		types: ['main_frame','sub_frame']//,'stylesheet','script','image','object','xmlhttprequest','other']
+		types: ['main_frame','sub_frame']
 	},
 	['blocking', 'responseHeaders']
 );
@@ -53,11 +52,10 @@ function saveOptions()
 
 function updateUI()
 {
-	console.log("updateUI end, active = " + active);
-
 	var str = active? "Undisposition active, click to deactivate": "Undisposition disabled, click to activate";
 	chrome.browserAction.setTitle({title:str});
 	chrome.browserAction.setBadgeText({text:active?"Act":"Dis"});
+	chrome.browserAction.setBadgeBackgroundColor({color:active?"#5084ee":"#e91e63"});
 }
 
 function ToggleActive()
